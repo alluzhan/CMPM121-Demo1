@@ -6,15 +6,14 @@ import tileUrl from "./assets/tile.svg?no-inline";
 const app = document.querySelector<HTMLElement>("#app")!;
 
 const heading = document.createElement("h1");
-heading.textContent = "D1 project";
+heading.textContent = "Pumpkin Clicker";
 
-const image = document.createElement("img");
-image.src = tileUrl;
-image.alt = "A teal tile with a cream circle";
-image.width = 96;
-image.height = 96;
+const pumpkinButton = document.createElement("pumpkinButton");
+pumpkinButton.id = "pumpkin";
+pumpkinButton.textContent = "🎃";
+pumpkinButton.style.fontSize = "64px";
 
-const message = document.createElement("p");
-message.textContent = "Your project starts here.";
-
-app.append(heading, image, message);
+pumpkinButton.addEventListener("click", () => {
+  console.log("pumpkin clicked");
+});
+app.append(heading, pumpkinButton);
