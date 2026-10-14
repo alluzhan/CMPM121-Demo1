@@ -9,10 +9,44 @@ import mediumPumpkinURL from "./assets/M_Pumpkin.png?no-inline";
 // @deno-types="./asset-url.d.ts"
 import largePumpkinURL from "./assets/L_Pumpkin.png?no-inline";
 
+// @deno-types="./asset-url.d.ts"
+import seedIconURL from "./assets/pumpkinSeed.png?no-inline";
+
+// @deno-types="./asset-url.d.ts"
+import waterIconURL from "./assets/water.png?no-inline";
+
+// @deno-types="./asset-url.d.ts"
+import sunIconURL from "./assets/sunshine.png?no-inline";
+
+// @deno-types="./asset-url.d.ts"
+import fertilizerIconURL from "./assets/fertilizer.png?no-inline";
+
+// @deno-types="./asset-url.d.ts"
+import farmIconURL from "./assets/farm.png?no-inline";
+
+// @deno-types="./asset-url.d.ts"
+import farmBackgroundURL from "./assets/farmBackground.png?no-inline";
+
 const app = document.querySelector<HTMLElement>("#app")!;
+
+document.body.style.backgroundImage = `url(${farmBackgroundURL})`;
 
 const heading = document.createElement("h1");
 heading.textContent = "Pumpkin Clicker";
+
+function createUpgradeButton(iconUrl: string, iconAlt: string) {
+  const button = document.createElement("button");
+
+  const icon = document.createElement("img");
+  icon.src = iconUrl;
+  icon.alt = iconAlt;
+  icon.className = "upgrade-icon";
+
+  const label = document.createElement("span");
+
+  button.append(icon, label);
+  return { button, label };
+}
 
 //-------------------------------------------------------------
 //This is the pumpkin button that can be clicked to increase seed count
@@ -22,8 +56,6 @@ pumpkinButton.id = "pumpkin";
 const pumpkinImage = document.createElement("img");
 pumpkinImage.src = smallPumpkinURL;
 pumpkinImage.alt = "Small pumpkin";
-pumpkinImage.width = 128;
-pumpkinImage.height = 128;
 pumpkinButton.append(pumpkinImage);
 
 //Button image changes based on the user's seeds per second
@@ -32,7 +64,6 @@ interface PumpkinStage {
   url: string;
   label: string;
 }
-
 const pumpkinStages: PumpkinStage[] = [
   { minRate: 0, url: smallPumpkinURL, label: "Small pumpkin" },
   { minRate: 50, url: mediumPumpkinURL, label: "Medium pumpkin" },
@@ -42,9 +73,17 @@ const pumpkinStages: PumpkinStage[] = [
 //-------------------------------------------------------------
 //seed counter
 let seedCount = 0;
-const seedsPerClick = 2; // This is the number of seeds that will be added to the seed count every click. (change to let later)
+const seedsPerClick = 2; // This is the number of seeds that will be added to the seed count every click
+const seedIcon = document.createElement("img");
+seedIcon.src = seedIconURL;
+seedIcon.alt = "Seeds";
+seedIcon.className = "seed-icon";
+
+const seedCountText = document.createElement("span");
+
 const seedCountDisplay = document.createElement("p");
 seedCountDisplay.id = "seed-count";
+seedCountDisplay.append(seedIcon, seedCountText);
 
 pumpkinButton.addEventListener("click", () => {
   seedCount += seedsPerClick;
@@ -52,8 +91,8 @@ pumpkinButton.addEventListener("click", () => {
 });
 
 //-------------------------------------------------------------
-//Timed growth --> how many seeds the user gains passivley without clicking
-let seedsPerSecond = 0; //start at 0 or change to 1
+//Timed growth: how many seeds the user gains passivley without clicking
+let seedsPerSecond = 0;
 let previousTime = performance.now();
 const passiveRateDisplay = document.createElement("p");
 passiveRateDisplay.id = "seed-rate";
@@ -69,11 +108,14 @@ function tick(now: number) {
 //-------------------------------------------------------------
 //water upgrade
 let waterOwned = 0;
-const waterRate = 1; //change to let later
-const waterBaseCost = 10; //change to let later
+const waterRate = 1;
+const waterBaseCost = 10;
 
-const waterButton = document.createElement("button");
-//calculates cost of water --> more waterOwned, the price goes up 1.15 the power of waterOwned)
+const water = createUpgradeButton(waterIconURL, "Water");
+const waterButton = water.button;
+const waterLabel = water.label;
+
+//calculates cost of water: more waterOwned, the price goes up 1.15 the power of waterOwned)
 function waterCost(): number {
   return Math.ceil(waterBaseCost * Math.pow(1.15, waterOwned));
 }
@@ -90,13 +132,14 @@ waterButton.addEventListener("click", () => {
   updateText();
 });
 
-//-------------------------------------------------------------
 //sun upgrade
 let sunsOwned = 0;
 const sunRate = 4;
 const sunBaseCost = 100;
 
-const sunButton = document.createElement("button");
+const sun = createUpgradeButton(sunIconURL, "Sun");
+const sunButton = sun.button;
+const sunLabel = sun.label;
 
 function sunCost(): number {
   return Math.ceil(sunBaseCost * Math.pow(1.25, sunsOwned));
@@ -110,13 +153,14 @@ sunButton.addEventListener("click", () => {
   updateText();
 });
 
-//-------------------------------------------------------------
 //fertilizer upgrade
 let fertilOwned = 0;
 const fertilRate = 40;
 const fertilBaseCost = 1000;
 
-const fertilButton = document.createElement("button");
+const fertilizer = createUpgradeButton(fertilizerIconURL, "Fertilizer");
+const fertilButton = fertilizer.button;
+const fertilLabel = fertilizer.label;
 
 function fertilCost(): number {
   return Math.ceil(fertilBaseCost * Math.pow(1.5, fertilOwned));
@@ -130,13 +174,14 @@ fertilButton.addEventListener("click", () => {
   updateText();
 });
 
-//--------------------------------------------------------------
 //farm upgrade
 let farmsOwned = 0;
 const farmRate = 300;
 const farmBaseCost = 10000;
 
-const farmButton = document.createElement("button");
+const farm = createUpgradeButton(farmIconURL, "Farm");
+const farmButton = farm.button;
+const farmLabel = farm.label;
 
 function farmCost(): number {
   return Math.ceil(farmBaseCost * Math.pow(1.75, farmsOwned));
@@ -150,14 +195,13 @@ farmButton.addEventListener("click", () => {
   updateText();
 });
 
-//-------------------------------------------------------------
+//---------------------------------------------------------------
 //calculates how many seeds the user gains per second based on how many upgrades they have purchased
 function calculateSeedsPerSecond(): number {
   return waterOwned * waterRate + sunsOwned * sunRate +
     fertilOwned * fertilRate + farmsOwned * farmRate;
 }
 
-//-------------------------------------------------------------
 //updates the pumpkin image based on the user's seeds per second
 function updatePumpkinImage() {
   let stage = pumpkinStages[0];
@@ -173,23 +217,25 @@ function updatePumpkinImage() {
   }
 }
 
-//-------------------------------------------------------------
-//takes curerent numbers and updates them so the user can see the correct values on the screen
+//takes curerent numbers and update/formats them so the user can see the correct values on the screen
 function updateText() {
   updatePumpkinImage();
-  seedCountDisplay.textContent = `Seeds: ${Math.floor(seedCount)}`;
+  seedCountText.textContent = `Seeds: ${Math.floor(seedCount)}`;
   passiveRateDisplay.textContent = `${seedsPerSecond.toFixed(1)} seeds/sec`;
-  waterButton.textContent =
-    `Water (${waterOwned} owned) - ${waterCost()} seeds`;
+  waterLabel.textContent = `Water (${waterOwned} owned) - ${waterCost()} seeds`;
   waterButton.disabled = seedCount < waterCost();
-  sunButton.textContent = `Sun (${sunsOwned} owned) - ${sunCost()} seeds`;
+  sunLabel.textContent = `Sun (${sunsOwned} owned) - ${sunCost()} seeds`;
   sunButton.disabled = seedCount < sunCost();
-  fertilButton.textContent =
+  fertilLabel.textContent =
     `Fertilizer (${fertilOwned} owned) - ${fertilCost()} seeds`;
   fertilButton.disabled = seedCount < fertilCost();
-  farmButton.textContent = `Farm (${farmsOwned} owned) - ${farmCost()} seeds`;
+  farmLabel.textContent = `Farm (${farmsOwned} owned) - ${farmCost()} seeds`;
   farmButton.disabled = seedCount < farmCost();
 }
+
+const upgradesPanel = document.createElement("div");
+upgradesPanel.id = "upgrades";
+upgradesPanel.append(waterButton, sunButton, fertilButton, farmButton);
 
 updateText();
 app.append(
@@ -197,9 +243,6 @@ app.append(
   pumpkinButton,
   seedCountDisplay,
   passiveRateDisplay,
-  waterButton,
-  sunButton,
-  fertilButton,
-  farmButton,
+  upgradesPanel,
 );
 requestAnimationFrame(tick);
