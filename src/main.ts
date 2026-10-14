@@ -114,6 +114,7 @@ const waterBaseCost = 10;
 const water = createUpgradeButton(waterIconURL, "Water");
 const waterButton = water.button;
 const waterLabel = water.label;
+waterButton.title = "Water to make the pumpkins grow faster";
 
 //calculates cost of water: more waterOwned, the price goes up 1.15 the power of waterOwned)
 function waterCost(): number {
@@ -140,6 +141,7 @@ const sunBaseCost = 100;
 const sun = createUpgradeButton(sunIconURL, "Sun");
 const sunButton = sun.button;
 const sunLabel = sun.label;
+sunButton.title = "Harness the power of the sun to make even bigger pumpkins";
 
 function sunCost(): number {
   return Math.ceil(sunBaseCost * Math.pow(1.25, sunsOwned));
@@ -161,6 +163,8 @@ const fertilBaseCost = 1000;
 const fertilizer = createUpgradeButton(fertilizerIconURL, "Fertilizer");
 const fertilButton = fertilizer.button;
 const fertilLabel = fertilizer.label;
+fertilButton.title =
+  "A secret mix of chemicals that are almost certainly dangerous to human health. They do help your plants grow like crazy, though.";
 
 function fertilCost(): number {
   return Math.ceil(fertilBaseCost * Math.pow(1.5, fertilOwned));
@@ -182,6 +186,8 @@ const farmBaseCost = 10000;
 const farm = createUpgradeButton(farmIconURL, "Farm");
 const farmButton = farm.button;
 const farmLabel = farm.label;
+farmButton.title =
+  "Instead of farming the pumpkins yourself, you can buy a farm and have other people do it for you!";
 
 function farmCost(): number {
   return Math.ceil(farmBaseCost * Math.pow(1.75, farmsOwned));
