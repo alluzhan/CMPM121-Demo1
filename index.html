@@ -113,6 +113,62 @@
       height: 100px;
       image-rendering: pixelated;
     }
+
+    /*
+    // Falling leaves full screen overlay
+    #falling-leaves-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+      z-index: 10;
+    }
+
+    // Animated sprite sheet
+    #falling-leaves-sprite{
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100px;
+      height: 60px;
+      background-repeat: no-repeat;
+      background-size: 2100px 60px;
+      opacity: 0.8;
+
+      animation: 
+        leaves-sprite-animation 1s steps(21) infinite, 
+        leaves-fall 8s linear infinite;
+    }
+
+    // Animate through 21 horizontal sprite frames 
+    @keyframes leaves-sprite-animation{
+      from{
+        background-position: 0 0;
+      }
+      to{
+        background-position: -2100px 0;
+      }
+    }
+
+    // Move leaves down screen 
+    @keyframes leaves-fall{
+      from{
+        transform: translate(10vw, -70px);
+      }
+      to{
+        transform: translate(70vw, 100vh);
+      }
+    }
+
+    // Keeps game interactive and above overlay 
+    #app {
+      position: relative;
+      z-index: 11;
+    } 
+    */
+
     </style>
 
     <title>Pumpkin Clicker</title>

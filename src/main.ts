@@ -1,5 +1,9 @@
 // Vite turns this import into a production-safe URL. Keep it as a file so
 // even this tiny example demonstrates a separately deployed asset.
+
+// @deno-types="./asset-url.d.ts"
+//import fallingLeavesURL from "./assets/fallingLeaves.png?no-inline";
+
 // @deno-types="./asset-url.d.ts"
 import smallPumpkinURL from "./assets/S_Pumpkin.png?no-inline";
 
@@ -47,6 +51,19 @@ function createUpgradeButton(iconUrl: string, iconAlt: string) {
   button.append(icon, label);
   return { button, label };
 }
+
+//-------------------------------------------------------------
+//Falling Leaves intro sprite sheet overlay
+//const fallingLeaves = document.createElement("div");
+//fallingLeaves.id = "falling-leaves-overlay";
+//fallingLeaves.setAttribute("aria-hidden","true");
+
+//const leavesSprite = document.createElement("div");
+//leavesSprite.id = "falling-leaves-sprite";
+//leavesSprite.style.backgroundImage = `url("${fallingLeavesURL}")`;
+
+//fallingLeaves.appendChild(leavesSprite);
+//document.body.prepend(fallingLeaves);
 
 //-------------------------------------------------------------
 //This is the pumpkin button that can be clicked to increase seed count
@@ -106,106 +123,86 @@ function tick(now: number) {
 }
 
 //-------------------------------------------------------------
-//water upgrade
-let waterOwned = 0;
-const waterRate = 1;
-const waterBaseCost = 10;
-
-const water = createUpgradeButton(waterIconURL, "Water");
-const waterButton = water.button;
-const waterLabel = water.label;
-waterButton.title = "Water to make the pumpkins grow faster";
-
-//calculates cost of water: more waterOwned, the price goes up 1.15 the power of waterOwned)
-function waterCost(): number {
-  return Math.ceil(waterBaseCost * Math.pow(1.15, waterOwned));
+//Defines properties each upgrade needs
+interface Upgrade{
+  name: string;
+  iconURL: string;
+  rate: number;
+  baseCost: number;
+  costMultiplier: number;
+  owned: number;
+  button: HTMLButtonElement;
+  label: HTMLSpanElement;
 }
 
-//user can only buy water if they have enough seeds, otherwise the button is disabled
-//subtracts the cost of water from the seed count, adds 1 to waterOwned, and updates seedsPerSecond based on how much water is owned
-waterButton.addEventListener("click", () => {
-  if (seedCount < waterCost()) {
-    return;
-  }
-  seedCount -= waterCost();
-  waterOwned += 1;
-  seedsPerSecond = calculateSeedsPerSecond();
-  updateText();
-});
+//upgrade details stored here
+const upgrades: Upgrade[] = [
+  {
+    name: "Water",
+    iconURL: waterIconURL,
+    rate: 1,
+    baseCost: 10,
+    costMultiplier: 1.15,
+    owned: 0,
+    ...createUpgradeButton(waterIconURL, "Water"),
+  },
+  {
+    name: "Sun",
+    iconURL: sunIconURL,
+    rate: 4,
+    baseCost: 100,
+    costMultiplier: 1.25,
+    owned: 0,
+    ...createUpgradeButton(sunIconURL, "Sun"),
+  },
+  {
+  name: "Fertilizer",
+    iconURL: fertilizerIconURL,
+    rate: 40,
+    baseCost: 1000,
+    costMultiplier: 1.5,
+    owned: 0,
+    ...createUpgradeButton(fertilizerIconURL, "Fertilizer"),
+  },
+  {
+  name: "Farm",
+    iconURL: farmIconURL,
+    rate: 300,
+    baseCost: 10000,
+    costMultiplier: 1.75,
+    owned: 0,
+    ...createUpgradeButton(farmIconURL, "Farm"),
+  },
+];
 
-//sun upgrade
-let sunsOwned = 0;
-const sunRate = 4;
-const sunBaseCost = 100;
-
-const sun = createUpgradeButton(sunIconURL, "Sun");
-const sunButton = sun.button;
-const sunLabel = sun.label;
-sunButton.title = "Harness the power of the sun to make even bigger pumpkins";
-
-function sunCost(): number {
-  return Math.ceil(sunBaseCost * Math.pow(1.25, sunsOwned));
+//calculates cost of next upgrade
+function getUpgradeCost(upgrade: Upgrade): number {
+  return Math.ceil(upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.owned),);
 }
 
-sunButton.addEventListener("click", () => {
-  if (seedCount < sunCost()) return;
-  seedCount -= sunCost();
-  sunsOwned += 1;
-  seedsPerSecond = calculateSeedsPerSecond();
-  updateText();
-});
-
-//fertilizer upgrade
-let fertilOwned = 0;
-const fertilRate = 40;
-const fertilBaseCost = 1000;
-
-const fertilizer = createUpgradeButton(fertilizerIconURL, "Fertilizer");
-const fertilButton = fertilizer.button;
-const fertilLabel = fertilizer.label;
-fertilButton.title =
-  "A secret mix of chemicals that are almost certainly dangerous to human health. They do help your plants grow like crazy, though.";
-
-function fertilCost(): number {
-  return Math.ceil(fertilBaseCost * Math.pow(1.5, fertilOwned));
+//upgrade purchase behavior
+function createUpgrade(upgrade: Upgrade): void {
+  upgrade.button.addEventListener("click", () => {
+    const cost = getUpgradeCost(upgrade);
+    if (seedCount < cost) {
+      return
+    };
+    seedCount -= cost;
+    upgrade.owned += 1;
+    seedsPerSecond = calculateSeedsPerSecond();
+    updateText();
+  });
 }
 
-fertilButton.addEventListener("click", () => {
-  if (seedCount < fertilCost()) return;
-  seedCount -= fertilCost();
-  fertilOwned += 1;
-  seedsPerSecond = calculateSeedsPerSecond();
-  updateText();
-});
-
-//farm upgrade
-let farmsOwned = 0;
-const farmRate = 300;
-const farmBaseCost = 10000;
-
-const farm = createUpgradeButton(farmIconURL, "Farm");
-const farmButton = farm.button;
-const farmLabel = farm.label;
-farmButton.title =
-  "Instead of farming the pumpkins yourself, you can buy a farm and have other people do it for you!";
-
-function farmCost(): number {
-  return Math.ceil(farmBaseCost * Math.pow(1.75, farmsOwned));
+//apply same purchse behavior to every upgrade
+for (const upgrade of upgrades) {
+  createUpgrade(upgrade);
 }
-
-farmButton.addEventListener("click", () => {
-  if (seedCount < farmCost()) return;
-  seedCount -= farmCost();
-  farmsOwned += 1;
-  seedsPerSecond = calculateSeedsPerSecond();
-  updateText();
-});
 
 //---------------------------------------------------------------
 //calculates how many seeds the user gains per second based on how many upgrades they have purchased
 function calculateSeedsPerSecond(): number {
-  return waterOwned * waterRate + sunsOwned * sunRate +
-    fertilOwned * fertilRate + farmsOwned * farmRate;
+  return upgrades.reduce( (total, upgrade) => total + upgrade.owned * upgrade.rate, 0, );
 }
 
 //updates the pumpkin image based on the user's seeds per second
@@ -224,24 +221,22 @@ function updatePumpkinImage() {
 }
 
 //takes curerent numbers and update/formats them so the user can see the correct values on the screen
-function updateText() {
+function updateText(): void {
   updatePumpkinImage();
+
   seedCountText.textContent = `Seeds: ${Math.floor(seedCount)}`;
   passiveRateDisplay.textContent = `${seedsPerSecond.toFixed(1)} seeds/sec`;
-  waterLabel.textContent = `Water (${waterOwned} owned) - ${waterCost()} seeds`;
-  waterButton.disabled = seedCount < waterCost();
-  sunLabel.textContent = `Sun (${sunsOwned} owned) - ${sunCost()} seeds`;
-  sunButton.disabled = seedCount < sunCost();
-  fertilLabel.textContent =
-    `Fertilizer (${fertilOwned} owned) - ${fertilCost()} seeds`;
-  fertilButton.disabled = seedCount < fertilCost();
-  farmLabel.textContent = `Farm (${farmsOwned} owned) - ${farmCost()} seeds`;
-  farmButton.disabled = seedCount < farmCost();
+
+  for (const upgrade of upgrades) {
+    const cost = getUpgradeCost(upgrade);
+    upgrade.label.textContent = `${upgrade.name} (${upgrade.owned} owned) - ${cost} seeds`;
+    upgrade.button.disabled = seedCount < cost;
+  }
 }
 
 const upgradesPanel = document.createElement("div");
 upgradesPanel.id = "upgrades";
-upgradesPanel.append(waterButton, sunButton, fertilButton, farmButton);
+upgradesPanel.append(...upgrades.map((upgrade) => upgrade.button));
 
 updateText();
 app.append(
