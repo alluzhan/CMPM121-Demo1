@@ -87,7 +87,6 @@ const pumpkinStages: PumpkinStage[] = [
   { minRate: 500, url: largePumpkinURL, label: "Large pumpkin" },
 ];
 
-//-------------------------------------------------------------
 //seed counter
 let seedCount = 0;
 const seedsPerClick = 2; // This is the number of seeds that will be added to the seed count every click
@@ -123,7 +122,6 @@ pumpkinButton.addEventListener("click", (event) => {
   ).onfinish = () => popup.remove();
 });
 
-//-------------------------------------------------------------
 //Timed growth: how many seeds the user gains passivley without clicking
 let seedsPerSecond = 0;
 let previousTime = performance.now();
