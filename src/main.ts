@@ -102,9 +102,25 @@ const seedCountDisplay = document.createElement("p");
 seedCountDisplay.id = "seed-count";
 seedCountDisplay.append(seedIcon, seedCountText);
 
-pumpkinButton.addEventListener("click", () => {
+pumpkinButton.addEventListener("click", (event) => {
   seedCount += seedsPerClick;
   updateText();
+
+  //show a "+2" popup that floats up from the click and fades out
+  const popup = document.createElement("span");
+  popup.textContent = `+${seedsPerClick}`;
+  popup.style.cssText =
+    `position: fixed; left: ${event.clientX}px; top: ${event.clientY}px; font-size: 1.5rem; font-weight: bold; pointer-events: none;`;
+  document.body.append(popup);
+
+  const drift = Math.random() * 60 - 30;
+  popup.animate(
+    [
+      { transform: "translate(-50%, -50%)" },
+      { transform: `translate(calc(-50% + ${drift}px), -250%)`, opacity: 0 },
+    ],
+    { duration: 800, easing: "ease-out" },
+  ).onfinish = () => popup.remove();
 });
 
 //-------------------------------------------------------------
