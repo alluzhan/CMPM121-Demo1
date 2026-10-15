@@ -124,7 +124,7 @@ function tick(now: number) {
 
 //-------------------------------------------------------------
 //Defines properties each upgrade needs
-interface Upgrade{
+interface Upgrade {
   name: string;
   iconURL: string;
   rate: number;
@@ -156,7 +156,7 @@ const upgrades: Upgrade[] = [
     ...createUpgradeButton(sunIconURL, "Sun"),
   },
   {
-  name: "Fertilizer",
+    name: "Fertilizer",
     iconURL: fertilizerIconURL,
     rate: 40,
     baseCost: 1000,
@@ -165,7 +165,7 @@ const upgrades: Upgrade[] = [
     ...createUpgradeButton(fertilizerIconURL, "Fertilizer"),
   },
   {
-  name: "Farm",
+    name: "Farm",
     iconURL: farmIconURL,
     rate: 300,
     baseCost: 10000,
@@ -177,7 +177,9 @@ const upgrades: Upgrade[] = [
 
 //calculates cost of next upgrade
 function getUpgradeCost(upgrade: Upgrade): number {
-  return Math.ceil(upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.owned),);
+  return Math.ceil(
+    upgrade.baseCost * Math.pow(upgrade.costMultiplier, upgrade.owned),
+  );
 }
 
 //upgrade purchase behavior
@@ -185,8 +187,8 @@ function createUpgrade(upgrade: Upgrade): void {
   upgrade.button.addEventListener("click", () => {
     const cost = getUpgradeCost(upgrade);
     if (seedCount < cost) {
-      return
-    };
+      return;
+    }
     seedCount -= cost;
     upgrade.owned += 1;
     seedsPerSecond = calculateSeedsPerSecond();
@@ -202,7 +204,10 @@ for (const upgrade of upgrades) {
 //---------------------------------------------------------------
 //calculates how many seeds the user gains per second based on how many upgrades they have purchased
 function calculateSeedsPerSecond(): number {
-  return upgrades.reduce( (total, upgrade) => total + upgrade.owned * upgrade.rate, 0, );
+  return upgrades.reduce(
+    (total, upgrade) => total + upgrade.owned * upgrade.rate,
+    0,
+  );
 }
 
 //updates the pumpkin image based on the user's seeds per second
@@ -229,7 +234,8 @@ function updateText(): void {
 
   for (const upgrade of upgrades) {
     const cost = getUpgradeCost(upgrade);
-    upgrade.label.textContent = `${upgrade.name} (${upgrade.owned} owned) - ${cost} seeds`;
+    upgrade.label.textContent =
+      `${upgrade.name} (${upgrade.owned} owned) - ${cost} seeds`;
     upgrade.button.disabled = seedCount < cost;
   }
 }
