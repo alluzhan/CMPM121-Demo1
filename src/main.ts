@@ -2,7 +2,7 @@
 // even this tiny example demonstrates a separately deployed asset.
 
 // @deno-types="./asset-url.d.ts"
-//import fallingLeavesURL from "./assets/fallingLeaves.png?no-inline";
+import fallingLeavesURL from "./assets/fallingLeaves.png?no-inline";
 
 // @deno-types="./asset-url.d.ts"
 import smallPumpkinURL from "./assets/S_Pumpkin.png?no-inline";
@@ -54,16 +54,16 @@ function createUpgradeButton(iconUrl: string, iconAlt: string) {
 
 //-------------------------------------------------------------
 //Falling Leaves intro sprite sheet overlay
-//const fallingLeaves = document.createElement("div");
-//fallingLeaves.id = "falling-leaves-overlay";
-//fallingLeaves.setAttribute("aria-hidden","true");
+const fallingLeaves = document.createElement("div");
+fallingLeaves.id = "falling-leaves-overlay";
+fallingLeaves.setAttribute("aria-hidden", "true");
 
-//const leavesSprite = document.createElement("div");
-//leavesSprite.id = "falling-leaves-sprite";
-//leavesSprite.style.backgroundImage = `url("${fallingLeavesURL}")`;
+const leavesSprite = document.createElement("div");
+leavesSprite.id = "falling-leaves-sprite";
+leavesSprite.style.backgroundImage = `url("${fallingLeavesURL}")`;
 
-//fallingLeaves.appendChild(leavesSprite);
-//document.body.prepend(fallingLeaves);
+fallingLeaves.appendChild(leavesSprite);
+document.body.prepend(fallingLeaves);
 
 //-------------------------------------------------------------
 //This is the pumpkin button that can be clicked to increase seed count
